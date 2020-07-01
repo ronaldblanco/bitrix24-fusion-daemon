@@ -1,6 +1,6 @@
 
 const request = require('urllib'),
-    log = require('../../init/logger')(module);
+    log = require('app/init/logger')(module);
 
 let finishB24Call = (callInfo, cache) => {
 
@@ -12,12 +12,12 @@ let finishB24Call = (callInfo, cache) => {
     cache.del("uuid_" + callInfo['callUuid'] + "_1");
     cache.del("uuid_" + callInfo['callUuid'] + "_2");
 
-    let requestURL = callInfo['url'] + "/telephony.externalcall.finish.json?";
-        requestURL += "CALL_ID=" + callInfo['b24uuid'];
-        requestURL += "&USER_ID=" + callInfo['userID'];
-        requestURL += "&DURATION=" + callInfo['duration'];
-        requestURL += "&STATUS_CODE=" + callInfo['sip_code'];
-        requestURL += "&ADD_TO_CHAT=0";
+    let requestURL = callInfo['url'] + "/telephony.externalcall.finish.json?"
+        + "CALL_ID=" + callInfo['b24uuid']
+        + "&USER_ID=" + callInfo['userID']
+        + "&DURATION=" + callInfo['duration']
+        + "&STATUS_CODE=" + callInfo['sip_code']
+        + "&ADD_TO_CHAT=0";
 
     request.request(requestURL, (err, data, res) => {
 
@@ -28,6 +28,7 @@ let finishB24Call = (callInfo, cache) => {
 
         if (res.statusCode !== 200) {
             log("Server failed to answer with " + res.statusCode + " code");
+            log(requestURL + " -> " + data.toString());
             return;
         }
 

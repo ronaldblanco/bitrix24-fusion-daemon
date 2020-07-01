@@ -1,4 +1,4 @@
-const log = require('../../init/logger')(module),
+const log = require('app/init/logger')(module),
     request = require('urllib');
 
 let hideCallScreen = (bitrix24Info, cache, callback) => {
@@ -22,9 +22,9 @@ let hideCallScreen = (bitrix24Info, cache, callback) => {
     usersWatchingScreen.forEach((user) => {
         if (user !== bitrix24Info['userID']) {
 
-            let requestURL = bitrix24Info['url'] + "/telephony.externalcall.hide?";
-                requestURL += "USER_ID=" + user;
-                requestURL += "&CALL_ID=" + bitrix24Info['b24uuid'];
+            let requestURL = bitrix24Info['url'] + "/telephony.externalcall.hide?"
+                + "USER_ID=" + user
+                + "&CALL_ID=" + bitrix24Info['b24uuid'];
             
             request.request(requestURL, (err) => {
                 if (err) {

@@ -1,33 +1,7 @@
-// {
-//     "event":"ONEXTERNALCALLSTART",
-//     "data":{
-//        "PHONE_NUMBER":"7863342521",
-//        "PHONE_NUMBER_INTERNATIONAL":"+17863342521",
-//        "EXTENSION":"",
-//        "USER_ID":"1",
-//        "CALL_LIST_ID":"0",
-//        "LINE_NUMBER":"",
-//        "IS_MOBILE":"0",
-//        "CALL_ID":"externalCall.c81598a17f0ba1ee72c2565c2df9a830.1593271292",
-//        "CRM_ENTITY_TYPE":"CONTACT",
-//        "CRM_ENTITY_ID":"142"
-    
-//  },
-//     "ts":"1593271628",
-//     "auth":{
-//        "domain":"crm.305plasticsurgery.com",
-//        "client_endpoint":"https://crm.305plasticsurgery.com/rest/",
-//        "server_endpoint":"https://oauth.bitrix.info/rest/",
-//        "member_id":"959278128ab5e919e0ff8b9c66a553e3",
-//        "application_token":"25kyj43oj9186r7lt1bcjhbakz9rlr8b"
-    
-//  }
-//  }
-
-const log = require('../../init/logger')(module),
-    bitrixConfig = require('../../config/bitrix'),
-    fusionConfig = require('../../config/fusion'),
-    getB24EmployeeList = require('./getB24EmployeeList'),
+const log = require('app/init/logger')(module),
+    bitrixConfig = require('app/config/bitrix'),
+    fusionConfig = require('app/config/fusion'),
+    getB24EmployeeList = require('app/lib/bitrix/getB24EmployeeList'),
     request = require('urllib');
 
 let originateB24Call = (requestBody, cache, callback) => {
@@ -39,12 +13,12 @@ let originateB24Call = (requestBody, cache, callback) => {
     }
 
     if (requestBody.auth.domain !== bitrixConfig.restRequestDomain) {
-        callback("originateB24Call Domain is not authorized");
+        callback("originateB24Call Domain " + requestBody.auth.domain + " is not authorized");
         return;
     }
 
     if (requestBody.auth.application_token !== bitrixConfig.restToken) {
-        callback("originateB24Call Auth token is invalid");
+        callback("originateB24Call Auth token " + requestBody.auth.application_token + " is invalid");
         return;
     }
 
@@ -79,14 +53,24 @@ let originateB24Call = (requestBody, cache, callback) => {
             return;
         }
 
-        let requestUrl = fusionConfig.transport 
-                + "://" + fusionConfig.domain 
-                + "/" + fusionConfig.c2cPath
-                + "&key=" + fusionConfig.apiKey
-                + "&src=" +  employeeList[userID]
-                + "&dst=" + requestBody.data['PHONE_NUMBER'] || requestBody.data['PHONE_NUMBER_INTERNATIONAL'];
+        let caller = employeeList[userID];
+        let callee =requestBody.data['PHONE_NUMBER'] || requestBody.data['PHONE_NUMBER_INTERNATIONAL'];
 
-        request.request(requestURL, (err, data, res) => {
+        let requestURL = fusionConfig.transport 
+                + "://" + fusionConfig.domain 
+                + "/" + fusionConfig.c2cPath + "?"
+                + "key=" + fusionConfig.apiKey
+                + "&src=" +  caller
+                + "&dest=" + callee;
+        
+        let requestOptions = {
+            'method' : 'POST',
+            'followRedirect' : true,
+            'timeout' : [30000, 30000],
+        }
+
+        log("Making a call " + caller + "@" + fusionConfig.domain + " -> " + callee);
+        request.request(requestURL, requestOptions, (err, data, res) => {
             if (err) {
                 callback("originateB24Call " + err);
                 return;
