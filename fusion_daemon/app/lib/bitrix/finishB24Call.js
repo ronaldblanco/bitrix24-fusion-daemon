@@ -1,32 +1,41 @@
 
 const request = require('urllib'),
     log = require('app/init/logger')(module),
+    registerOrphanedCall = require('app/lib/bitrix/registerOrphanedCall'),
     fusionConfig = require('app/config/fusion'),
-    bitrix24Config = require('app/config/bitrix');
+    bitrixConfig = require('app/config/bitrix');
 
 let finishB24Call = (callInfo, cache) => {
 
     if (!callInfo['b24uuid']) {
-        log("No Bitrix24 UUID provided!");
+        log('No Bitrix24 UUID provided!');
         return;
     }
 
-    cache.del("uuid_" + callInfo['callUuid'] + "_1");
-    cache.del("uuid_" + callInfo['callUuid'] + "_2");
+    callInfo = cache.get('hangup_data_' + callInfo['b24uuid']) || callInfo;
 
-    let requestURL = callInfo['url'] + "/telephony.externalcall.finish.json?"
-        + "CALL_ID=" + callInfo['b24uuid']
-        + "&USER_ID=" + callInfo['userID']
-        + "&DURATION=" + callInfo['duration']
-        + "&STATUS_CODE=" + callInfo['sip_code']
-        + "&ADD_TO_CHAT=0";
+    if (cache.get('finishedCall_' + callInfo['b24uuid']) === 'true') {
+        log('Call ' + callInfo['b24uuid'] + ' is already finished on Bitrix, exiting');
+        return;
+    }
 
-    if (bitrix24Config.appendRecording && callInfo['rec_file'] && fusionConfig.recordingPath) {
+    log('Registering finished call ' + callInfo['b24uuid'] + ' to userID: ' + callInfo['userID']);
+
+    cache.put('finishedCall_' +  callInfo['b24uuid'], 'true', 1500);
+
+    let requestURL = bitrixConfig.url + '/telephony.externalcall.finish.json?'
+        + 'CALL_ID=' + callInfo['b24uuid']
+        + '&USER_ID=' + callInfo['userID']
+        + '&DURATION=' + callInfo['duration']
+        + '&STATUS_CODE=' + callInfo['sip_code']
+        + '&ADD_TO_CHAT=0';
+
+    if (bitrixConfig.appendRecording && callInfo['rec_file'] && fusionConfig.recordingPath) {
 
         let recordingPath = callInfo['rec_path'].replace(fusionConfig.localRecordingPath, '');
-        recordingPath = fusionConfig.recordingPath + recordingPath + "/" + callInfo['rec_file'];
+        recordingPath = fusionConfig.recordingPath + recordingPath + '/' + callInfo['rec_file'];
 
-        requestURL = requestURL + "&RECORD_URL=" + recordingPath;
+        requestURL = requestURL + '&RECORD_URL=' + recordingPath;
     }
 
     request.request(requestURL, (err, data, res) => {
@@ -36,9 +45,14 @@ let finishB24Call = (callInfo, cache) => {
             return;
         }
 
+        if (res.statusCode === 400) {
+            log('Registering orphaned call');
+            registerOrphanedCall(callInfo);
+            return;
+        }
+
         if (res.statusCode !== 200) {
-            log("Server failed to answer with " + res.statusCode + " code");
-            log(requestURL + " -> " + data.toString());
+            log('URL ' + requestURL + ' failed with ' + res.statusCode + ' code');
             return;
         }
 
@@ -47,21 +61,21 @@ let finishB24Call = (callInfo, cache) => {
         try {
             finishCall = JSON.parse(data.toString());
         } catch (e) {
-            log("Answer from server is not JSON");
+            log('Answer from server is not JSON');
             return;
         }
 
-        if (typeof finishCall.result === 'undefined') {
-            log("Missing result section in answer");
+        if (finishCall.result === undefined || !finishCall.result.hasOwnProperty('CALL_ID')) {
+            log('Missing result section in answer');
             return;
         }
 
         if (finishCall.result['CALL_ID']) {
-            log('Call ' + finishCall.result['CALL_ID'] + ' successfully registered');
+            log('Call ' + JSON.stringify(callInfo) + ' successfully registered');
             return;
         }
 
-        log("Call registration failed with " + JSON.stringify(finishCall, null, 2));
+        log('Call registration failed with ' + JSON.stringify(finishCall, null, 2));
     });
 }
 
