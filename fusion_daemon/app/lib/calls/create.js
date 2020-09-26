@@ -1,10 +1,10 @@
-const log = require('app/init/logger')(module),
-    createB24Call = require('app/lib/bitrix/createB24Call'),
-    getB24EmployeeList = require('app/lib/bitrix/getB24EmployeeList'),
-    getB24ContactInfo = require('app/lib/bitrix/getB24ContactInfo'),
-    commentB24Timeline = require('app/lib/bitrix/commentB24Timeline'),
-    fusionConfig = require('app/config/fusion'),
-    bitrixConfig = require('app/config/bitrix');
+const log = require('../../init/logger')(module),
+    createB24Call = require('../bitrix/createB24Call'),
+    getB24EmployeeList = require('../bitrix/getB24EmployeeList'),
+    getB24ContactInfo = require('../bitrix/getB24ContactInfo'),
+    commentB24Timeline = require('../bitrix/commentB24Timeline'),
+    fusionConfig = require('../../config/fusion'),
+    bitrixConfig = require('../../config/bitrix');
 
 let create = (headers, cache) => {
 
@@ -17,11 +17,13 @@ let create = (headers, cache) => {
         log('Click2Call initiated call, adjusting legA/B numbers...');
         legBNumber = legANumber;
         legANumber = headers['Caller-RDNIS'] || headers['Caller-Caller-ID-Number'];
+		log(legBNumber);
+		log(legANumber);
     }
 
     log('Processing call ' + legANumber + ' -> ' + legBNumber);
 
-    getB24EmployeeList(cache)
+    /*getB24EmployeeList(cache)
         .then(getB24EmployeeListResult => {
 
             let employeeList = getB24EmployeeListResult['phoneToId'],
@@ -129,7 +131,7 @@ let create = (headers, cache) => {
                 }
             }
         })
-        .catch(err => log('create Cannot get employeeList: ' + err));
+        .catch(err => log('create Cannot get employeeList: ' + err));*/
 }
 
 module.exports = create;

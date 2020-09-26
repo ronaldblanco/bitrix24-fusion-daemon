@@ -1,17 +1,17 @@
-const log = require('app/init/logger')(module),
-      getB24CallInfo = require('app/lib/bitrix/getB24CallInfo'),
-      getB24EmployeeList = require('app/lib/bitrix/getB24EmployeeList'),
-      showB24CallScreen = require('app/lib/bitrix/showB24CallScreen'),
-      notifyB24User = require('app/lib/bitrix/notifyB24Users'),
-      updateB24CallInfo = require('app/lib/bitrix/updateB24CallInfo'),
-      getB24ContactInfo = require('app/lib/bitrix/getB24ContactInfo'),
-      bitrixConfig = require('app/config/bitrix');
+const log = require('../../init/logger')(module),
+      getB24CallInfo = require('../../lib/bitrix/getB24CallInfo'),
+      getB24EmployeeList = require('../../lib/bitrix/getB24EmployeeList'),
+      showB24CallScreen = require('../../lib/bitrix/showB24CallScreen'),
+      notifyB24User = require('../../lib/bitrix/notifyB24Users'),
+      updateB24CallInfo = require('../../lib/bitrix/updateB24CallInfo'),
+      getB24ContactInfo = require('../../lib/bitrix/getB24ContactInfo'),
+      bitrixConfig = require('../../config/bitrix');
 
 let progress = (headers, cache) => {
 
     let dialedUser =  headers['variable_callee_id_number'] || headers['variable_dialed_user'] || headers['Caller-Destination-Number'];
 
-    getB24EmployeeList(cache)
+    /*getB24EmployeeList(cache)
         .then(res => {
             let employeeList = res['phoneToId'];
 
@@ -84,7 +84,7 @@ let progress = (headers, cache) => {
         })
         .catch(err => {
             log('Cannot get employeeList: ' + err);
-        });
+        });*/
 }
 
 module.exports = progress;

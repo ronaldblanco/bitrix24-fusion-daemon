@@ -1,8 +1,8 @@
-const log = require('app/init/logger')(module),
-    fusionConfig = require('app/config/fusion'),
-    restConfig = require('app/config/rest'),
-    getB24EmployeeList = require('app/lib/bitrix/getB24EmployeeList'),
-    freeswitchOriginate = require('app/lib/calls/originate');
+const log = require('../../init/logger')(module),
+    fusionConfig = require('../../config/fusion'),
+    restConfig = require('../../config/rest'),
+    getB24EmployeeList = require('../bitrix/getB24EmployeeList'),
+    freeswitchOriginate = require('../calls/originate');
 
 let originateB24Call = (requestBody, cache, callback) => {
 

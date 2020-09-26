@@ -1,11 +1,11 @@
-const log = require('app/init/logger')(module),
-    bitrixConfig = require('app/config/bitrix'),
-    getB24CallInfo = require('app/lib/bitrix/getB24CallInfo'),
-    getB24EmployeeList = require('app/lib/bitrix/getB24EmployeeList'),
-    hideB24CallScreen = require('app/lib/bitrix/hideB24CallScreen'),
-    updateB24CallInfo = require('app/lib/bitrix/updateB24CallInfo'),
-    getB24ContactInfo = require('app/lib/bitrix/getB24ContactInfo'),
-    notifyB24User = require('app/lib/bitrix/notifyB24Users');
+const log = require('../../init/logger')(module),
+    bitrixConfig = require('../../config/bitrix'),
+    getB24CallInfo = require('../bitrix/getB24CallInfo'),
+    getB24EmployeeList = require('../bitrix/getB24EmployeeList'),
+    hideB24CallScreen = require('../bitrix/hideB24CallScreen'),
+    updateB24CallInfo = require('../bitrix/updateB24CallInfo'),
+    getB24ContactInfo = require('../bitrix/getB24ContactInfo'),
+    notifyB24User = require('../bitrix/notifyB24Users');
 
 let bridge = (headers, cache) => {
 
@@ -19,7 +19,7 @@ let bridge = (headers, cache) => {
 
     log('Call was answered by ' + dialedUser);
 
-    getB24EmployeeList(cache)
+    /*getB24EmployeeList(cache)
         .then(res => {
             let employeeList = res['phoneToId'];
 
@@ -93,7 +93,7 @@ let bridge = (headers, cache) => {
         })
         .catch(err => {
             log('Cannot get employeeList: ' + err);
-        });
+        });*/
 }
 
 module.exports = bridge;

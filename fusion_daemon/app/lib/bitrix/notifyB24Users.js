@@ -1,5 +1,5 @@
-const log = require('app/init/logger')(module),
-    bitrixConfig = require('app/config/bitrix'),
+const log = require('../../init/logger')(module),
+    bitrixConfig = require('../../config/bitrix'),
     request = require('urllib');
 
 let notifyB24Users = (bitrix24Info, cache, callback) => {

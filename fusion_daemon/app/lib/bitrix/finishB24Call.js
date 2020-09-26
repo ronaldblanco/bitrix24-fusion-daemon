@@ -1,9 +1,9 @@
 
 const request = require('urllib'),
-    log = require('app/init/logger')(module),
-    registerOrphanedCall = require('app/lib/bitrix/registerOrphanedCall'),
-    fusionConfig = require('app/config/fusion'),
-    bitrixConfig = require('app/config/bitrix');
+    log = require('../../init/logger')(module),
+    registerOrphanedCall = require('../bitrix/registerOrphanedCall'),
+    fusionConfig = require('../../config/fusion'),
+    bitrixConfig = require('../../config/bitrix');
 
 let finishB24Call = (callInfo, cache) => {
 

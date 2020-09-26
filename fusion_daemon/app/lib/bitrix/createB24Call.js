@@ -1,8 +1,8 @@
 
 const request = require('urllib'),
-    log = require('app/init/logger')(module),
-    bitrixConfig = require('app/config/bitrix'),
-    fusionConfig = require('app/config/fusion');
+    log = require('../../init/logger')(module),
+    bitrixConfig = require('../../config/bitrix'),
+    fusionConfig = require('../../config/fusion');
 
 let createB24CallInfo = (callInfo, cache) => {
 

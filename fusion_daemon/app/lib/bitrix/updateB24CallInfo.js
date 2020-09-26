@@ -1,6 +1,6 @@
 // Module to update userID of existing call
 
-const log = require('app/init/logger')(module);
+const log = require('../../init/logger')(module);
 
 let updateB24CallInfo = (callInfo, cache) => {
 

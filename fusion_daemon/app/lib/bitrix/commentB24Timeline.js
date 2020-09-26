@@ -1,5 +1,5 @@
-const log = require('app/init/logger')(module),
-    bitrixConfig = require('app/config/bitrix'),
+const log = require('../../init/logger')(module),
+    bitrixConfig = require('../../config/bitrix'),
     request = require('urllib');
 
 let commentB24Timeline = (contact24Info, cache, callback) => {

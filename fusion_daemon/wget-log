@@ -1,0 +1,5 @@
+--2020-08-28 16:08:12--  https://127.0.0.1/app/click_to_call/click_to_call.php?username=API
+Connecting to 127.0.0.1:443... connected.
+ERROR: The certificate of '127.0.0.1' is not trusted.
+ERROR: The certificate of '127.0.0.1' doesn't have a known issuer.
+The certificate's owner does not match hostname '127.0.0.1'

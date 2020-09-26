@@ -1,7 +1,7 @@
 const esl = require('modesl'),
-      options = require('app/config/freeswitch'),
+      options = require('../config/freeswitch'),
       toArray = require('lodash/toArray'),
-      log = require('app/init/logger')(module);
+      log = require('./logger')(module);
 
 let events = [],
     conn = createConnection();

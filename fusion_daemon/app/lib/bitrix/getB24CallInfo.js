@@ -1,5 +1,5 @@
 
-const log = require('app/init/logger')(module);
+const log = require('../../init/logger')(module);
 
 let getB24CallInfo = (callInfo, cache) => {
 

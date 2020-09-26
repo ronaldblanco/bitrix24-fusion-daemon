@@ -1,12 +1,12 @@
-const log = require('app/init/logger')(module),
-    notifyB24User = require('app/lib/bitrix/notifyB24Users'),
-    bitrixConfig = require('app/config/bitrix'),
-    getB24CallInfo = require('app/lib/bitrix/getB24CallInfo'),
-    getB24EmployeeList = require('app/lib/bitrix/getB24EmployeeList'),
-    finishB24Call = require('app/lib/bitrix/finishB24Call'),
-    getB24ContactInfo = require('app/lib/bitrix/getB24ContactInfo'),
-    commentB24Timeline = require('app/lib/bitrix/commentB24Timeline'),
-    hangupCauseTable = require('app/config/freeswitch').hangupCause;
+const log = require('../../init/logger')(module),
+    notifyB24User = require('../bitrix/notifyB24Users'),
+    bitrixConfig = require('../../config/bitrix'),
+    getB24CallInfo = require('../bitrix/getB24CallInfo'),
+    getB24EmployeeList = require('../bitrix/getB24EmployeeList'),
+    finishB24Call = require('../bitrix/finishB24Call'),
+    getB24ContactInfo = require('../bitrix/getB24ContactInfo'),
+    commentB24Timeline = require('../bitrix/commentB24Timeline'),
+    hangupCauseTable = require('../../config/freeswitch').hangupCause;
 
 let hangup = (headers, cache) => {
 
@@ -20,11 +20,11 @@ let hangup = (headers, cache) => {
         return;
     }
 
-    let bitrix24Info = {
+    /*let bitrix24Info = {
         callUuid: headers['variable_call_uuid'] || headers['variable_uuid'],
-    }
+    }*/
 
-    getB24CallInfo(bitrix24Info, cache).forEach(legInfo => {
+    /*getB24CallInfo(bitrix24Info, cache).forEach(legInfo => {
         legInfo
             .then(b24callInfo => {
 
@@ -204,7 +204,7 @@ let hangup = (headers, cache) => {
                     .catch(err => log('Hangup: ' + err));
             })
             .catch(err => log('Hangup: ' + err));
-    });
+    });*/
 }
 
 module.exports = hangup;
