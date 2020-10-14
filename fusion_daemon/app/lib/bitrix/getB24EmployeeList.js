@@ -27,9 +27,44 @@ function getB24EmployeeList(cache) {
         let requestURL = bitrixConfig.url + '/user.get.json?'
             + 'USER_TYPE=employee';
 
-        request.request(requestURL, (err, data, res) => {
+      	// log('Executing:' + requestURL); //Check url webhook to bitrix24
+	//##################################################################
+ 	//NEW CODE TO GET ALL POSIBLE EMPLOYEES FROM BITRIX24##RONALD
+	const promise1 = new Promise((resolve, reject) => {
+		resolve(request.request(requestURL));
+	});
+	const promise2 = new Promise((resolve, reject) => {
+		resolve(request.request(requestURL + '&start=50'));
+	});
+	const promise3 = new Promise((resolve, reject) => {
+		resolve(request.request(requestURL + '&start=100'));
+	});
+	const promise4 = new Promise((resolve, reject) => {
+		resolve(request.request(requestURL + '&start=150'));
+	});
+	const promise5 = new Promise((resolve, reject) => {
+		resolve(request.request(requestURL + '&start=200'));
+	});
 
-            if (err) {
+	allPromises = Promise.all([promise1, promise2, promise3, promise4, promise5]).then((values) => {
+		let userlist = [];
+		for(i=0;i< values.length;i++){
+			try{
+				var myjason = JSON.parse(values[i].data.toString()).result;
+				userlist = userlist.concat(myjason);
+			} catch(err){
+				console.log('Error ocurred in promise, Description: ' + err);
+			}
+		}
+		return userlist;
+	});
+	//#####################################################
+	//NEW CODE END
+
+	 //request.request(requestURL, (err, data, res) => { //Original code line
+	 allPromises.then(userList => { //New code line RONALD
+
+           /* if (err) {
                 reject(err);
                 return;
             }
@@ -58,7 +93,9 @@ function getB24EmployeeList(cache) {
                 return;
             }
 
-            userList = userList.result;
+            userList = userList.result;*/
+
+	    //New Code Operation Begin at this point, the previus code must be comented!
 
             let employeeListResult = {
                 'phoneToId': {},
@@ -156,12 +193,15 @@ function getB24EmployeeList(cache) {
             //log('employeeListResult -> ' + JSON.stringify(employeeListResult));
 
             resolve(employeeListResult);
-        });
+
+        //}); //Original Code line
+	}).catch(err => console.log(err)); //New Code final RONALD
+
     });
 
-    cache.put('employeeList', employeeList, 10 * 60 * 1000); // Store for 10 min
-
+    cache.put('employeeList', employeeList, 60 * 60 * 1000); // Store for 60 min
+    //console.log(employeeList);
     return employeeList;
 }
-
+//console.log(getB24EmployeeList);
 module.exports = getB24EmployeeList;
